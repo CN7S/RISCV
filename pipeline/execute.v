@@ -84,6 +84,7 @@ wire	[3 :0]	alu_ctrl_i;
 
 reg		[31:0]	alu_op_1_w;
 reg		[31:0]	alu_op_2_w;
+reg		[31:0]	alu_oprend2_w;
 wire	[31:0]	alu_rslt_w;
 wire	[1:0]	forward1_w;
 wire	[1:0]	forward2_w;
@@ -117,24 +118,30 @@ always@(*) begin
 		end
 	endcase
 end
+
+// alu_oprend2_w
+always@(*) begin
+	case(forward2_w)
+		2'b00: begin
+			alu_oprend2_w = oprend2_i;
+		end
+		2'b01: begin
+			alu_oprend2_w = ex_oprend_i;
+		end
+		2'b10: begin
+			alu_oprend2_w = wb_oprend_i;
+		end
+		default: begin
+			alu_oprend2_w = 0;
+		end
+	endcase
+end
+
 // alu_op_2_w
 always@(*) begin
 	if(alusrc_i) 	alu_op_2_w = imm_i[31:0];
 	else begin
-		case(forward2_w)
-			2'b00: begin
-				alu_op_2_w = oprend2_i;
-			end
-			2'b01: begin
-				alu_op_2_w = ex_oprend_i;
-			end
-			2'b10: begin
-				alu_op_2_w = wb_oprend_i;
-			end
-			default: begin
-				alu_op_2_w = 0;
-			end
-		endcase
+					alu_op_2_w = alu_oprend2_w;
 	end
 end
 
@@ -162,7 +169,7 @@ always@(posedge clk or posedge rst) begin
 		memwrite_o	<=	memwrite_i;
 		regwrite_o	<=	regwrite_i;
 		alu_rst_o	<=	alu_rslt_w;
-		mem_wdata_o	<=	oprend2_i;
+		mem_wdata_o	<=	alu_oprend2_w;
 		rd_o		<=	rd_i;
 	end
 end

@@ -42,7 +42,7 @@ wire			branch;
 wire			rs_hazard;
 wire			load_hazard;
 
-assign branch = branch_opcode == `SBTYPE_OPCODE;
+assign branch = branch_opcode == `SBTYPE_INST_OPCODE;
 assign rs_hazard  = rs1_i == id_rd_i | rs2_i == id_rd_i;
 assign load_hazard = id_memread_i & id_regwrite_i;
 assign branch_id_hazard = id_regwrite_i & (rs1_i == id_rd_i | rs2_i == id_rd_i);

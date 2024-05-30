@@ -141,7 +141,7 @@ assign pc_branch_o	=	{imm_w[30:0],1'b0} + pc_i;
 
 
 // jump
-assign pc_jmp_o	=	imm_w[31:0];
+assign pc_jmp_o	=	{imm_w[30:0],1'b0} + pc_i;
 assign jmp_o	=	jal_w;
 // jump
 
