@@ -30,6 +30,8 @@ module inst_decode(
 	// pc_branch
 	pc_branch_o,
 	branch_o,
+	branch_taken_o,
+	branch_pred_i,
 	
 	ex_rd_i,
 	mem_rd_i,
@@ -68,6 +70,8 @@ output				alusrc_o;
 output				memwrite_o;
 output				regwrite_o;
 output	[31:0]		pc_branch_o;
+output				branch_taken_o;
+input				branch_pred_i;
 input	[4 :0]		ex_rd_i;
 input	[4 :0]		mem_rd_i;
 input				ex_regwrite_i;
@@ -100,6 +104,8 @@ reg		[3 :0]		alu_ctrl_o;
 reg					alusrc_o;
 reg					regwrite_o;
 wire	[31:0]		pc_branch_o;
+wire				branch_taken_o;
+wire				branch_pred_i;
 wire	[4 :0]		ex_rd_i;
 wire	[4 :0]		mem_rd_i;
 wire				ex_regwrite_i;
@@ -149,6 +155,8 @@ reg		[4 :0]		rs1_neg_r;
 reg		[4 :0]		rs2_neg_r;
 
 
+wire				branch_op;
+
 // decode inst
 assign	opcode	=	inst_i[6 :0 ];
 assign	rs1_w	=	inst_i[19:15];
@@ -160,7 +168,10 @@ assign	alu_func_w	=	{func7[5], func3};
 // decode inst
 
 // branch
-assign pc_branch_o	=	{imm_w[30:0],1'b0} + pc_i;
+
+assign if_flush_o	=	branch_o;
+assign branch_o		=	branch_op & (branch_taken_o ^ branch_pred_i);
+assign pc_branch_o	=	branch_taken_o ? ({imm_w[30:0],1'b0} + pc_i) : (pc_i + 4);
 // branch
 
 
@@ -243,10 +254,13 @@ imm_gen x_imm_gen(
 	.imm_o(imm_w)
 );
 
+
+wire		flush_w;
 core_control x_control(
 	.inst_i(opcode),
 	.stall_i(stall_i),
-	.branch(branch_o),
+	.branch(branch_taken_o),
+	.branch_op(branch_op),
 	.memread(memread_w),
 	.memtoreg(memtoreg_w),
 	.jal(jal_w),
@@ -258,7 +272,7 @@ core_control x_control(
 	.func(func3),
 	.zero(zero),
 	.less(less),
-	.if_flush(if_flush_o)
+	.if_flush(flush_w)
 );
 
 

@@ -76,6 +76,8 @@ inst_fetch x_inst_fetch(
 	.if_flush(if_flush_w),
 	.branch(branch_w),
 	.pc_branch_i(pc_branch_w),
+	.branch_taken(branch_taken_w),
+	.branch_pred_o(branch_pred_w),
 	.jmp(jmp_w),
 	.pc_jmp_i(pc_jmp_w),
 	.inst_i(inst_i),
@@ -123,6 +125,8 @@ inst_decode x_inst_decode(
 	.mem_rd_i(mem_rd_w),
 	.mem_regwrite_i(mem_regwrite_w),
 	.mem_oprend_i(wb_wdata_w),
+	.branch_taken_o(branch_taken_w),
+	.branch_pred_i(branch_pred_w),
 	
 	// pc_jmp
 	.pc_jmp_o(pc_jmp_w),

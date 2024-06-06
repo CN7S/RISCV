@@ -5,7 +5,7 @@ module reg_file(
 	input wire [4:0] raddr_1,
 	input wire [4:0] raddr_2,
 	input wire [4:0] waddr,
-	input reg [31:0] wdata,
+	input wire [31:0] wdata,
 	output reg [31:0] rdata_1,
 	output reg [31:0] rdata_2
 );

@@ -90,7 +90,7 @@ alu_ctrl x_alu_ctrl(
 branch_ctrl x_branch_ctrl(
 	.branch(ctrl_branch_w),
 	.zero(alu_zero_w),
-	.sign(alu_rslt_w[31]),
+	.sign(alu_rslt_w[31]), // less
 	.func(inst_i[14:12]),
 	.branch_o(pc_branch_w)
 );
