@@ -81,10 +81,10 @@ end
 
 // branch predict cache
 
-reg		[63:0]	bcache [0:3]; // 63 T/NT 62:32 addr 31:0 nxt_addr
+reg		[63:0]	bcache [0:1]; // 63 T/NT 62:32 addr 31:0 nxt_addr
 
-assign cache_data = bcache[pc_r[3:2]];
-assign cache_hit = cache_data[62:35] == pc_r[31:4];
+assign cache_data = bcache[pc_r[2]];
+assign cache_hit = cache_data[62:34] == pc_r[31:3];
 assign branch_pred = cache_hit ? cache_data[63] : 0;
 assign pred_pc = branch_pred ? cache_data[31:0] : (pc_r + 4);
 
@@ -94,17 +94,13 @@ always@(posedge clk or posedge rst) begin
 	if(rst) begin
 		bcache[0]	<=	0;
 		bcache[1]	<=	0;
-		bcache[2]	<=	0;
-		bcache[3]	<=	0;
 	end
 	else if(branch) begin
-		bcache[pc_o[3:2]] <= {branch_taken, pc_o[31:4], 3'b0, pc_branch_i};
+		bcache[pc_o[2]] <= {branch_taken, pc_o[31:3], 2'b0, pc_branch_i};
 	end
 	else begin
 		bcache[0]	<=	bcache[0];
 		bcache[1]	<=	bcache[1];
-		bcache[2]	<=	bcache[2];
-		bcache[3]	<=	bcache[3];	
 	end
 end
 

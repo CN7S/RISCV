@@ -169,7 +169,6 @@ assign	alu_func_w	=	{func7[5], func3};
 
 // branch
 
-assign if_flush_o	=	branch_o;
 assign branch_o		=	branch_op & (branch_taken_o ^ branch_pred_i);
 assign pc_branch_o	=	branch_taken_o ? ({imm_w[30:0],1'b0} + pc_i) : (pc_i + 4);
 // branch
@@ -179,6 +178,9 @@ assign pc_branch_o	=	branch_taken_o ? ({imm_w[30:0],1'b0} + pc_i) : (pc_i + 4);
 assign pc_jmp_o	=	{imm_w[30:0],1'b0} + pc_i;
 assign jmp_o	=	jal_w;
 // jump
+
+assign if_flush_o	=	branch_o | jmp_o;
+
 
 // fwd_data1_w
 always@(*) begin
